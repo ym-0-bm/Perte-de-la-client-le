@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/initialize.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+
+    <link rel="stylesheet" href="https://unicons.iconscout.com/release/v4.0.0/css/line.css">
+
+    <title>Formulaire de Prédiction de Perte de Clientèle</title>
+</head>
+<body>
+    <div class="container">
+        <header>Formulaire à Plusieurs Étapes</header>
+        <div class="steps">
+            <span class="circle active">1</span>
+            <span class="circle">2</span>
+            <span class="circle">3</span>
+            <div class="progress-bar">
+                <span class="indicator"></span>
+            </div>
+        </div>
+        <form>
+            <div class="form-section active" id="customerDetails">
+                <header>Détails du Client</header>
+                <div class="fields">
+                    <div class="input-field">
+                        <label>Citoyen Senior</label>
+                        <select id="seniorCitizen" required>
+                            <option disabled selected>Sélectionner</option>
+                            <option>Oui</option>
+                            <option>Non</option>
+                        </select>
+                    </div>
+                    <div class="input-field">
+                        <label>Charges Mensuelles</label>
+                        <input type="number" id="monthlyCharges" step="0.01" placeholder="Entrer les charges mensuelles" required>
+                    </div>
+                    <div class="input-field">
+                        <label>Charges Totales</label>
+                        <input type="number" id="totalCharges" step="0.01" placeholder="Entrer les charges totales" required>
+                    </div>
+                    <div class="input-field">
+                        <label>Genre</label>
+                        <select id="gender" required>
+                            <option disabled selected>Sélectionner le genre</option>
+                            <option>Homme</option>
+                            <option>Femme</option>
+                            <option>Autre</option>
+                        </select>
+                    </div>
+                    <div class="input-field">
+                        <label>Partenaire</label>
+                        <select id="partner" required>
+                            <option disabled selected>Sélectionner</option>
+                            <option>Oui</option>
+                            <option>Non</option>
+                        </select>
+                    </div>
+                    <div class="input-field">
+                        <label>Dépendants</label>
+                        <select id="dependents" required>
+                            <option disabled selected>Sélectionner</option>
+                            <option>Oui</option>
+                            <option>Non</option>
+                        </select>
+                    </div>
+                    <div class="input-field">
+                        <label>Service Téléphonique</label>
+                        <select id="phoneService" required>
+                            <option disabled selected>Sélectionner</option>
+                            <option>Oui</option>
+                            <option>Non</option>
+                        </select>
+                    </div>
+                    <div class="input-field">
+                        <label>Lignes Multiples</label>
+                        <select id="multipleLines" required>
+                            <option disabled selected>Sélectionner</option>
+                            <option>Oui</option>
+                            <option>Non</option>
+                            <option hidden>Aucun service téléphonique</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="form-section" id="serviceDetails">
+                <header>Détails du Service</header>
+                <div class="fields">
+                    <div class="input-field">
+                        <label>Service Internet</label>
+                        <select id="internetService" required>
+                            <option disabled selected>Sélectionner</option>
+                            <option>DSL</option>
+                            <option>Fibre optique</option>
+                            <option>Aucun</option>
+                        </select>
+                    </div>
+                    <div class="input-field">
+                        <label>Sécurité en Ligne</label>
+                        <select id="onlineSecurity" required>
+                            <option disabled selected>Sélectionner</option>
+                            <option>Oui</option>
+                            <option>Non</option>
+                            <option hidden>Aucun service internet</option>
+                        </select>
+                    </div>
+                    <div class="input-field">
+                        <label>Sauvegarde en Ligne</label>
+                        <select id="onlineBackup" required>
+                            <option disabled selected>Sélectionner</option>
+                            <option>Oui</option>
+                            <option>Non</option>
+                            <option hidden>Aucun service internet</option>
+                        </select>
+                    </div>
+                    <div class="input-field">
+                        <label>Protection des Appareils</label>
+                        <select id="deviceProtection" required>
+                            <option disabled selected>Sélectionner</option>
+                            <option>Oui</option>
+                            <option>Non</option>
+                            <option hidden>Aucun service internet</option>
+                        </select>
+                    </div>
+                    <div class="input-field">
+                        <label>Soutien Technique</label>
+                        <select id="techSupport" required>
+                            <option disabled selected>Sélectionner</option>
+                            <option>Oui</option>
+                            <option>Non</option>
+                            <option hidden>Aucun service internet</option>
+                        </select>
+                    </div>
+                    <div class="input-field">
+                        <label>Télévision en Streaming</label>
+                        <select id="streamingTV" required>
+                            <option disabled selected>Sélectionner</option>
+                            <option>Oui</option>
+                            <option>Non</option>
+                            <option hidden>Aucun service internet</option>
+                        </select>
+                    </div>
+                    <div class="input-field">
+                        <label>Films en Streaming</label>
+                        <select id="streamingMovies" required>
+                            <option disabled selected>Sélectionner</option>
+                            <option>Oui</option>
+                            <option>Non</option>
+                            <option hidden>Aucun service internet</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="form-section" id="contractDetails">
+                <header>Détails du Contrat</header>
+                <div class="fields">
+                    <div class="input-field">
+                        <label>Contrat</label>
+                        <select id="contract" required>
+                            <option disabled selected>Sélectionner</option>
+                            <option>Mois à mois</option>
+                            <option>Un an</option>
+                            <option>Deux ans</option>
+                        </select>
+                    </div>
+                    <div class="input-field">
+                        <label>Facturation Sans Papier</label>
+                        <select id="paperlessBilling" required>
+                            <option disabled selected>Sélectionner</option>
+                            <option>Oui</option>
+                            <option>Non</option>
+                        </select>
+                    </div>
+                    <div class="input-field">
+                        <label>Méthode de Paiement</label>
+                        <select id="paymentMethod" required>
+                            <option disabled selected>Sélectionner</option>
+                            <option>Chèque électronique</option>
+                            <option>Chèque envoyé par la poste</option>
+                            <option>Virement bancaire (automatique)</option>
+                            <option>Carte de crédit (automatique)</option>
+                        </select>
+                    </div>
+                    <div class="input-field">
+                        <label>Durée (mois)</label>
+                        <input type="number" id="tenure" placeholder="Entrer la durée" required>
+                    </div>
+                </div>
+            </div>
+            <div class="buttons">
+                <button id="prev" class="backBtn" disabled>Précédent</button>
+                <button id="next">Suivant</button>
+                <button type="submit" id="submitBtn" style="display: none;" >Prédire</button>
+            </div>
+        </form>
+    </div>
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>

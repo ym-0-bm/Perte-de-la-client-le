@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/initialize.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+
+    <link rel="stylesheet" href="https://unicons.iconscout.com/release/v4.0.0/css/line.css">
+
+    <title>Responsive Registration Form</title>
+</head>
+<body>
+    <div class="container">
+        <div class="steps">
+            <span class="circle active">1</span>
+            <span class="circle">2</span>
+            <span class="circle">3</span>
+            <div class="progress-bar">
+                <span class="indicator"></span>
+            </div>
+        </div>
+        <form>
+            <div class="form-section active" id="customerDetails">
+                <header>Customer Details</header>
+                <!-- Customer Details Fields -->
+                <div class="fields">
+                    <div class="input-field">
+                        <label>Senior Citizen</label>
+                        <select id="seniorCitizen" required>
+                            <option disabled selected>Select</option>
+                            <option>Yes</option>
+                            <option>No</option>
+                        </select>
+                    </div>
+                    <div class="input-field">
+                        <label>Monthly Charges</label>
+                        <input type="number" id="monthlyCharges" step="0.01" placeholder="Enter monthly charges" required>
+                    </div>
+                    <div class="input-field">
+                        <label>Total Charges</label>
+                        <input type="number" id="totalCharges" step="0.01" placeholder="Enter total charges" required>
+                    </div>
+                    <div class="input-field">
+                        <label>Gender</label>
+                        <select id="gender" required>
+                            <option disabled selected>Select gender</option>
+                            <option>Male</option>
+                            <option>Female</option>
+                            <option>Others</option>
+                        </select>
+                    </div>
+                    <div class="input-field">
+                        <label>Partner</label>
+                        <select id="partner" required>
+                            <option disabled selected>Select</option>
+                            <option>Yes</option>
+                            <option>No</option>
+                        </select>
+                    </div>
+                    <div class="input-field">
+                        <label>Dependents</label>
+                        <select id="dependents" required>
+                            <option disabled selected>Select</option>
+                            <option>Yes</option>
+                            <option>No</option>
+                        </select>
+                    </div>
+                    <div class="input-field">
+                        <label>Phone Service</label>
+                        <select id="phoneService" required>
+                            <option disabled selected>Select</option>
+                            <option>Yes</option>
+                            <option>No</option>
+                        </select>
+                    </div>
+                    <div class="input-field">
+                        <label>Multiple Lines</label>
+                        <select id="multipleLines" required>
+                            <option disabled selected>Select</option>
+                            <option>Yes</option>
+                            <option>No</option>
+                            <option hidden>No phone service</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="form-section" id="serviceDetails">
+                <header>Service Details</header>
+                <!-- Service Details Fields -->
+                <div class="fields">
+                    <div class="input-field">
+                        <label>Internet Service</label>
+                        <select id="internetService" required>
+                            <option disabled selected>Select</option>
+                            <option>DSL</option>
+                            <option>Fiber optic</option>
+                            <option>None</option>
+                        </select>
+                    </div>
+                    <div class="input-field">
+                        <label>Online Security</label>
+                        <select id="onlineSecurity" required>
+                            <option disabled selected>Select</option>
+                            <option>Yes</option>
+                            <option>No</option>
+                            <option hidden>No internet service</option>
+                        </select>
+                    </div>
+                    <div class="input-field">
+                        <label>Online Backup</label>
+                        <select id="onlineBackup" required>
+                            <option disabled selected>Select</option>
+                            <option>Yes</option>
+                            <option>No</option>
+                            <option hidden>No internet service</option>
+                        </select>
+                    </div>
+                    <div class="input-field">
+                        <label>Device Protection</label>
+                        <select id="deviceProtection" required>
+                            <option disabled selected>Select</option>
+                            <option>Yes</option>
+                            <option>No</option>
+                            <option hidden>No internet service</option>
+                        </select>
+                    </div>
+                    <div class="input-field">
+                        <label>Tech Support</label>
+                        <select id="techSupport" required>
+                            <option disabled selected>Select</option>
+                            <option>Yes</option>
+                            <option>No</option>
+                            <option hidden>No internet service</option>
+                        </select>
+                    </div>
+                    <div class="input-field">
+                        <label>Streaming TV</label>
+                        <select id="streamingTV" required>
+                            <option disabled selected>Select</option>
+                            <option>Yes</option>
+                            <option>No</option>
+                            <option hidden>No internet service</option>
+                        </select>
+                    </div>
+                    <div class="input-field">
+                        <label>Streaming Movies</label>
+                        <select id="streamingMovies" required>
+                            <option disabled selected>Select</option>
+                            <option>Yes</option>
+                            <option>No</option>
+                            <option hidden>No internet service</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="form-section" id="contractDetails">
+                <header>Contract Details</header>
+                <!-- Contract Details Fields -->
+                <div class="fields">
+                    <div class="input-field">
+                        <label>Contract</label>
+                        <select id="contract" required>
+                            <option disabled selected>Select</option>
+                            <option>Month-to-month</option>
+                            <option>One year</option>
+                            <option>Two year</option>
+                        </select>
+                    </div>
+                    <div class="input-field">
+                        <label>Paperless Billing</label>
+                        <select id="paperlessBilling" required>
+                            <option disabled selected>Select</option>
+                            <option>Yes</option>
+                            <option>No</option>
+                        </select>
+                    </div>
+                    <div class="input-field">
+                        <label>Payment Method</label>
+                        <select id="paymentMethod" required>
+                            <option disabled selected>Select</option>
+                            <option>Electronic check</option>
+                            <option>Mailed check</option>
+                            <option>Bank transfer (automatic)</option>
+                            <option>Credit card (automatic)</option>
+                        </select>
+                    </div>
+                    <div class="input-field">
+                        <label>Tenure (months)</label>
+                        <input type="number" id="tenure" placeholder="Enter tenure" required>
+                    </div>
+                </div>
+            </div>
+            <div class="buttons">
+                <button id="prev" disabled>Prev</button>
+                <button id="next">Next</button>
+            </div>
+        </form>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
