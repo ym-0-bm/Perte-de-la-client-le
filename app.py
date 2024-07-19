@@ -3,10 +3,10 @@ import joblib
 import pymysql.cursors
 
 app = Flask(__name__)
-app.config['MYSQL_HOST'] = 'db'
+app.config['MYSQL_HOST'] = 'localhost'
 app.config['MYSQL_USER'] = 'root'
-app.config['MYSQL_PASSWORD'] = 'password'
-app.config['MYSQL_DB'] = 'job_scraper'
+app.config['MYSQL_PASSWORD'] = ''
+app.config['MYSQL_DB'] = 'prediction_history'
 app.config['SECRET_KEY'] = 'secret key'
 
 model = joblib.load('Prediction/model_rf.joblib')
@@ -37,6 +37,7 @@ def get_tenure_class(tenure):
 
 @app.route("/", methods=["GET", "POST"])
 def home():
+    conn = get_db_connection()
     if request.method == 'POST':
         # Récupérer les données du formulaire
         senior_citizen = int(request.form['seniorCitizen'])
@@ -90,7 +91,23 @@ def home():
             result = "Client susceptible de se désabonner."
         else:
             result = "Client probablement fidèle."
-        print(result)
+
+        # Ajout dans la base de donnée
+        cursor = conn.cursor()
+        cursor.execute("""
+            INSERT INTO predictions
+            (SeniorCitizen, MonthlyCharges, TotalCharges, gender, Partner, Dependents,
+             PhoneService, MultipleLines, InternetService, OnlineSecurity, OnlineBackup,
+             DeviceProtection, TechSupport, StreamingTV, StreamingMovies, Contract,
+             PaperlessBilling, PaymentMethod, tenure, tenure_class, Churn, Confidence)
+            VALUES( %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+            """, (senior_citizen, monthly_charges, total_charges, gender, partner, dependents,
+                  phone_service, multiple_lines, internet_service, online_security, online_backup,
+                  device_protection, tech_support, streaming_tv, streaming_movies, contract,
+                  paperless_billing, payment_method, tenure, tenure_class, prediction, confidence)
+                )
+        conn.commit()
+        conn.close()
         return render_template("output.html", prediction_result=result, proba=confidence)
 
         # Afficher le formulaire par défaut
