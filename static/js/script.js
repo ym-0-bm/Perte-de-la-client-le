@@ -39,10 +39,10 @@ document.addEventListener("DOMContentLoaded", function () {
         var value = this.value;
         var fields = ['onlineSecurity', 'onlineBackup', 'deviceProtection', 'techSupport', 'streamingTV', 'streamingMovies'];
 
-        if (value === 'Aucun') {
+        if (value === 'No') {
             fields.forEach(function(field) {
                 var selectField = document.getElementById(field);
-                selectField.value = 'Aucun service internet';
+                selectField.value = 'No internet service';
                 selectField.disabled = true;
             });
         } else {
@@ -58,10 +58,10 @@ document.addEventListener("DOMContentLoaded", function () {
         var value = this.value;
         var fields = ['multipleLines'];
 
-        if (value === 'Non') {
+        if (value === 'No') {
             fields.forEach(function(field) {
                 var selectField = document.getElementById(field);
-                selectField.value = 'Aucun service téléphonique';
+                selectField.value = 'No phone service';
                 selectField.disabled = true;
             });
         } else {
@@ -71,5 +71,12 @@ document.addEventListener("DOMContentLoaded", function () {
                 selectField.value = 'Sélectionner';
             });
         }
+    });
+
+    document.getElementById('predictionForm').addEventListener('submit', function() {
+        var fields = document.querySelectorAll('select[disabled]');
+        fields.forEach(function(field) {
+            field.disabled = false;
+        });
     });
 });

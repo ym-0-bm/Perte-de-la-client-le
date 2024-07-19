@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/initialize.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+
+    <link rel="stylesheet" href="https://unicons.iconscout.com/release/v4.0.0/css/line.css">
+
+    <title>Résultat de la Prédiction de la Perte de Clientèle</title>
+</head>
+<body>
+    <div class="container">
+        <h1>Résultat de la Prédiction</h1>
+        {% if prediction_result %}
+            <p>{{ prediction_result }}</p>
+            <p>Taux de confiance : {{ proba }}%</p>
+        {% else %}
+            <p>Aucune prédiction disponible.</p>
+        {% endif %}
+        <button ><a href="{{ url_for('home') }}" style="color: white; text-decoration: none">Retour</a></button>
+    </div>
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>
