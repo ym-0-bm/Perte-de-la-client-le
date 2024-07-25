@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/initialize.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styleadmin.css') }}">
+
+    <link rel="stylesheet" href="https://unicons.iconscout.com/release/v4.0.0/css/line.css">
+
+    <title>Panneau de Contrôle Admin</title>
+</head>
+<body>
+    <nav>
+        <div class="menu-items">
+            <ul class="nav-links">
+                <li><a href="{{ url_for('admin') }}">
+                    <i class="uil uil-estate"></i>
+                    <span class="link-name">Tableau de bord</span>
+                </a></li>
+                <li><a href="{{ url_for('liste') }}">
+                    <i class="uil uil-files-landscapes"></i>
+                    <span class="link-name">Contenu</span>
+                </a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <section class="dashboard">
+        <h1>Liste des Prédictions</h1>
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Date</th>
+                    <th>Genre</th>
+                    <th>Partenaire</th>
+                    <th>Contrat</th>
+                    <th>Charges Mensuelles</th>
+                    <th>Durée (tenure)</th>
+                    <th>Churn</th>
+                    <th>Confiance</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for prediction in predictions %}
+                <tr>
+                    <td>{{ prediction.id }}</td>
+                    <td>{{ prediction.timestamp }}</td>
+                    <td>{{ prediction.gender }}</td>
+                    <td>{{ prediction.Partner }}</td>
+                    <td>{{ prediction.Contract }}</td>
+                    <td>{{ prediction.MonthlyCharges }}</td>
+                    <td>{{ prediction.tenure }}</td>
+                    <td>{{ prediction.Churn }}</td>
+                    <td>{{ prediction.Confidence }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </section>
+
+    <script src="{{ url_for('static', filename='js/scriptadmin.js') }}"></script>
+</body>
+</html>

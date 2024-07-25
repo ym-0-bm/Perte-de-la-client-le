@@ -105,7 +105,7 @@ def home():
                   phone_service, multiple_lines, internet_service, online_security, online_backup,
                   device_protection, tech_support, streaming_tv, streaming_movies, contract,
                   paperless_billing, payment_method, tenure, tenure_class, prediction, confidence)
-                )
+                       )
         conn.commit()
         conn.close()
         return render_template("output.html", prediction_result=result, proba=confidence)
@@ -117,6 +117,45 @@ def home():
 @app.route("/output", methods=["GET", "POST"])
 def output():
     return render_template("output.html")
+
+
+@app.route("/admin", methods=["GET", "POST"])
+def admin():
+    # Récupérer les données depuis la base de données
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM predictions ORDER BY timestamp DESC LIMIT 5")
+    predictions_recent = cursor.fetchall()
+    cursor.execute('SELECT COUNT(*) AS nombre_total_de_prédictions FROM predictions')
+    nombre_total_de_predictions = cursor.fetchone()
+    nombre_total_de_predictions = nombre_total_de_predictions["nombre_total_de_prédictions"]
+    cursor.execute("SELECT COUNT(*) AS clients_fidèles FROM predictions WHERE Churn = '[0]'")
+    clients_fideles = cursor.fetchone()
+    clients_fideles = clients_fideles["clients_fidèles"]
+    cursor.execute("SELECT COUNT(*) AS clients_perdus FROM predictions WHERE Churn = '[1]'")
+    clients_perdus = cursor.fetchone()
+    clients_perdus = clients_perdus["clients_perdus"]
+    print(nombre_total_de_predictions, clients_fideles, clients_perdus)
+    conn.close()
+
+    return render_template("admin/index.html", predictions_recent=predictions_recent,
+                           nombre_total_de_predictions=nombre_total_de_predictions,
+                           clients_fideles=clients_fideles,
+                           clients_perdus=clients_perdus
+                           )
+
+
+@app.route("/admin/liste", methods=["GET", "POST"])
+def liste():
+    # Récupérer les données depuis la base de données
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute('SELECT * FROM predictions')
+    predictions = cursor.fetchall()
+
+    conn.close()
+
+    return render_template("admin/liste.html", predictions=predictions )
 
 
 if __name__ == '__main__':
