@@ -1,6 +1,9 @@
-from flask import Flask, render_template, request, url_for, redirect
+from flask import Flask, render_template, request
+from sklearn.preprocessing import OneHotEncoder
+import pandas as pd
 import joblib
 import pymysql.cursors
+from encoder_columns import encoder_columns
 
 app = Flask(__name__)
 app.config['MYSQL_HOST'] = 'localhost'
@@ -9,7 +12,14 @@ app.config['MYSQL_PASSWORD'] = ''
 app.config['MYSQL_DB'] = 'prediction_history'
 app.config['SECRET_KEY'] = 'secret key'
 
-model = joblib.load('Prediction/model_rf.joblib')
+# Charger le model
+model = joblib.load('Prediction/model.joblib')
+column_names = [
+    'gender', 'SeniorCitizen', 'Partner', 'Dependents', 'PhoneService', 'MultipleLines',
+    'InternetService', 'OnlineSecurity', 'OnlineBackup', 'DeviceProtection', 'TechSupport',
+    'StreamingTV', 'StreamingMovies', 'Contract', 'PaperlessBilling', 'PaymentMethod',
+    'MonthlyCharges', 'TotalCharges', 'tenure_class'
+]
 
 
 # Initialisation de la connexion MySQL
@@ -68,44 +78,79 @@ def home():
             gender, senior_citizen, partner, dependents, phone_service, multiple_lines,
             internet_service, online_security, online_backup, device_protection, tech_support,
             streaming_tv, streaming_movies, contract, paperless_billing,
-            payment_method, monthly_charges, total_charges, tenure, tenure_class
-        ]]
-        print(input_data)
-
-        # Préparez les données pour le modèle
-        input_data = [[
-            gender, senior_citizen, partner, dependents, phone_service, multiple_lines,
-            internet_service, online_security, online_backup, device_protection, tech_support,
-            streaming_tv, streaming_movies, contract, paperless_billing,
             payment_method, monthly_charges, total_charges, tenure_class
         ]]
-        print(input_data)
+        # print(input_data)
+
+        # Convertir en DataFrame en utilisant les colonnes d'origine
+        input_df = pd.DataFrame(input_data, columns=column_names)
+        # print(input_df)
+
+        # Encoder les données d'entrée
+        encoded_input_data = pd.DataFrame(
+            OneHotEncoder(
+                handle_unknown='ignore',
+                sparse_output=False).fit_transform(input_df),
+            columns=OneHotEncoder().fit(input_df).get_feature_names_out(input_df.columns)
+        )
+
+        # print(encoded_input_data)
+
+        # Créer un DataFrame avec des colonnes manquantes et des valeurs par défaut (0)
+        missing_columns = [col for col in encoder_columns if col not in encoded_input_data.columns.to_list()]
+        missing_data = pd.DataFrame(0.0, index=encoded_input_data.index, columns=missing_columns)
+
+        # Ajouter les colonnes manquantes au DataFrame existant
+        encoded_input_data = pd.concat([encoded_input_data, missing_data], axis=1)
+
+        # Réorganiser les colonnes pour s'assurer qu'elles sont dans le même ordre que celles du modèle
+        encoded_input_df = encoded_input_data[encoder_columns]
+        print(encoded_input_df)
 
         # Faire la prédiction
-        prediction = model.predict(input_data)
-        proba = model.predict_proba(input_data)
+        prediction = model.predict(encoded_input_df)
+        proba = model.predict_proba(encoded_input_df)
         confidence = max(proba[0]) * 100
 
         # Afficher le résultat de la prédiction
         if prediction == 1:
             result = "Client susceptible de se désabonner."
+            statut = "Yes"
         else:
             result = "Client probablement fidèle."
+            statut = "No"
 
         # Ajout dans la base de donnée
         cursor = conn.cursor()
-        cursor.execute("""
-            INSERT INTO predictions
-            (SeniorCitizen, MonthlyCharges, TotalCharges, gender, Partner, Dependents,
-             PhoneService, MultipleLines, InternetService, OnlineSecurity, OnlineBackup,
-             DeviceProtection, TechSupport, StreamingTV, StreamingMovies, Contract,
-             PaperlessBilling, PaymentMethod, tenure, tenure_class, Churn, Confidence)
-            VALUES( %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
-            """, (senior_citizen, monthly_charges, total_charges, gender, partner, dependents,
-                  phone_service, multiple_lines, internet_service, online_security, online_backup,
-                  device_protection, tech_support, streaming_tv, streaming_movies, contract,
-                  paperless_billing, payment_method, tenure, tenure_class, prediction, confidence)
-                       )
+
+        # Insérer dans Client
+        cursor.execute("INSERT INTO Client (genre, personneagée, Partenaire, Dépendants) VALUES (%s, %s, %s, %s)",
+                       (gender, senior_citizen, partner, dependents))
+        idclient = cursor.lastrowid  # Récupère idclient généré
+
+        # Insérer dans Abonnement
+        cursor.execute(
+            """
+            INSERT INTO Abonnement (
+            idclient, ancienneté, Contrat, FacturationSansPapier, MéthodeDePaiement, ChargesMensuelles, ChargesTotales
+            ) 
+            VALUES (%s, %s, %s, %s, %s, %s, %s)""",
+            (idclient, tenure, contract, paperless_billing, payment_method, monthly_charges, total_charges))
+
+        # Insérer dans Services
+        cursor.execute(
+            """INSERT INTO Services (
+            idclient, ServiceTéléphonique, LignesMultiples, ServiceInternet, SécuritéEnLigne, SauvegardeEnLigne, 
+            ProtectionDesAppareils, SupportTechnique, TVEnStreaming, FilmsEnStreaming
+            ) 
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)""",
+            (idclient, phone_service, multiple_lines, internet_service, online_security, online_backup,
+             device_protection, tech_support, streaming_tv, streaming_movies))
+
+        # Insérer dans statut
+        cursor.execute("INSERT INTO statut (idclient, statut, score) VALUES (%s, %s, %s)",
+                       (idclient, statut, confidence))
+
         conn.commit()
         conn.close()
         return render_template("output.html", prediction_result=result, proba=confidence)
@@ -124,15 +169,21 @@ def admin():
     # Récupérer les données depuis la base de données
     conn = get_db_connection()
     cursor = conn.cursor()
-    cursor.execute("SELECT * FROM predictions ORDER BY timestamp DESC LIMIT 5")
+    cursor.execute("""
+    SELECT * FROM Client
+    JOIN Abonnement ON Client.idclient = Abonnement.idclient
+    JOIN Services ON Client.idclient = Services.idclient
+    JOIN statut ON Client.idclient = statut.idclient
+    ORDER BY Client.idclient DESC LIMIT 5
+    """)
     predictions_recent = cursor.fetchall()
-    cursor.execute('SELECT COUNT(*) AS nombre_total_de_prédictions FROM predictions')
+    cursor.execute('SELECT COUNT(*) AS nombre_total_de_prédictions FROM statut')
     nombre_total_de_predictions = cursor.fetchone()
     nombre_total_de_predictions = nombre_total_de_predictions["nombre_total_de_prédictions"]
-    cursor.execute("SELECT COUNT(*) AS clients_fidèles FROM predictions WHERE Churn = '[0]'")
+    cursor.execute("SELECT COUNT(*) AS clients_fidèles FROM statut WHERE statut = 'No'")
     clients_fideles = cursor.fetchone()
     clients_fideles = clients_fideles["clients_fidèles"]
-    cursor.execute("SELECT COUNT(*) AS clients_perdus FROM predictions WHERE Churn = '[1]'")
+    cursor.execute("SELECT COUNT(*) AS clients_perdus FROM statut WHERE statut = 'Yes'")
     clients_perdus = cursor.fetchone()
     clients_perdus = clients_perdus["clients_perdus"]
     print(nombre_total_de_predictions, clients_fideles, clients_perdus)
@@ -150,12 +201,20 @@ def liste():
     # Récupérer les données depuis la base de données
     conn = get_db_connection()
     cursor = conn.cursor()
-    cursor.execute('SELECT * FROM predictions')
+    cursor.execute(
+        """
+            SELECT * FROM Client
+            JOIN Abonnement ON Client.idclient = Abonnement.idclient
+            JOIN Services ON Client.idclient = Services.idclient
+            JOIN statut ON Client.idclient = statut.idclient
+            ORDER BY Client.idclient DESC LIMIT 5
+        """
+    )
     predictions = cursor.fetchall()
 
     conn.close()
 
-    return render_template("admin/liste.html", predictions=predictions )
+    return render_template("admin/liste.html", predictions=predictions)
 
 
 if __name__ == '__main__':
