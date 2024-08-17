@@ -82,20 +82,16 @@
                             {% endif %}
                         {% endfor %}
                     </div>
-                    <div class="data email">
-                        <span class="data-title">Partenaire</span>
+                    <div class="data joined">
+                        <span class="data-title">Méthode de paiement</span>
                         {% for prediction in predictions_recent %}
-                            {% if prediction['Partner'] == 'Yes' %}
-                            <span class="data-list">Oui</span>
-                            {% else %}
-                            <span class="data-list">Non</span>
-                            {% endif %}
+                            <span class="data-list">{{ prediction['MéthodeDePaiement'] }}</span>
                         {% endfor %}
                     </div>
                     <div class="data joined">
-                        <span class="data-title">Date</span>
+                        <span class="data-title">Ancienneté</span>
                         {% for prediction in predictions_recent %}
-                            <span class="data-list">{{ prediction['timestamp'] }}</span>
+                            <span class="data-list">{{ prediction['ancienneté'] }} mois</span>
                         {% endfor %}
                     </div>
                     <div class="data type">
